@@ -1,14 +1,23 @@
 <template>
   <div class="container">
-    <div class="header">
-      <h1>📝 All Reviews</h1>
-      <router-link to="/reviews/create" class="btn btn-primary">+ New Review</router-link>
+    <div class="page-header">
+      <div class="header-content">
+        <i class="mdi mdi-file-document-multiple header-icon"></i>
+        <h1>All Reviews</h1>
+      </div>
+      <router-link to="/reviews/create" class="btn btn-primary">
+        <i class="mdi mdi-plus"></i>
+        New Review
+      </router-link>
     </div>
     
     <!-- Filters -->
     <div class="card filters">
       <div class="filter-group">
-        <label>Sentiment:</label>
+        <label>
+          <i class="mdi mdi-filter"></i>
+          Sentiment
+        </label>
         <select v-model="filters.sentiment" @change="fetchReviews">
           <option value="">All</option>
           <option value="positive">Positive</option>
@@ -18,12 +27,18 @@
       </div>
       
       <div class="filter-group">
-        <label>Min Score:</label>
+        <label>
+          <i class="mdi mdi-chart-line"></i>
+          Min Score
+        </label>
         <input v-model.number="filters.min_score" type="number" min="0" max="100" @change="fetchReviews" />
       </div>
       
       <div class="filter-group">
-        <label>Sort:</label>
+        <label>
+          <i class="mdi mdi-sort"></i>
+          Sort
+        </label>
         <select v-model="filters.sort" @change="fetchReviews">
           <option value="desc">Newest First</option>
           <option value="asc">Oldest First</option>
@@ -31,34 +46,55 @@
       </div>
     </div>
     
-    <div v-if="loading" class="loading">Loading reviews...</div>
+    <div v-if="loading" class="loading">
+      <i class="mdi mdi-loading mdi-spin"></i>
+      Loading reviews...
+    </div>
     
     <div v-else-if="error" class="error-message">{{ error }}</div>
     
     <div v-else-if="reviews.length === 0" class="card no-data">
+      <i class="mdi mdi-information-outline"></i>
       <p>No reviews found. Create your first review!</p>
     </div>
     
     <div v-else class="reviews-grid">
       <div v-for="review in reviews" :key="review.id" class="card review-card">
         <div class="review-header">
-          <span class="badge" :class="`badge-${review.sentiment}`">{{ review.sentiment }}</span>
+          <span class="badge" :class="`badge-${review.sentiment}`">
+            <i v-if="review.sentiment === 'positive'" class="mdi mdi-emoticon-happy"></i>
+            <i v-else-if="review.sentiment === 'negative'" class="mdi mdi-emoticon-sad"></i>
+            <i v-else class="mdi mdi-emoticon-neutral"></i>
+            {{ review.sentiment }}
+          </span>
           <span class="score">{{ review.score }}/100</span>
         </div>
         
         <p class="review-content">{{ review.content }}</p>
         
         <div v-if="review.topics && review.topics.length > 0" class="topics">
-          <span v-for="topic in review.topics" :key="topic" class="topic-tag">{{ topic }}</span>
+          <span v-for="topic in review.topics" :key="topic" class="topic-tag">
+            <i class="mdi mdi-tag"></i>
+            {{ topic }}
+          </span>
         </div>
         
         <div class="review-footer">
-          <span class="author">by {{ review.user?.name }}</span>
-          <span class="date">{{ formatDate(review.created_at) }}</span>
+          <span class="author">
+            <i class="mdi mdi-account"></i>
+            {{ review.user?.name }}
+          </span>
+          <span class="date">
+            <i class="mdi mdi-calendar"></i>
+            {{ formatDate(review.created_at) }}
+          </span>
         </div>
         
         <div v-if="canDelete(review)" class="review-actions">
-          <button @click="deleteReview(review.id)" class="btn btn-danger btn-sm">Delete</button>
+          <button @click="deleteReview(review.id)" class="btn btn-danger btn-sm">
+            <i class="mdi mdi-delete"></i>
+            Delete
+          </button>
         </div>
       </div>
     </div>
@@ -70,6 +106,7 @@
         :disabled="pagination.current_page === 1"
         class="btn btn-secondary"
       >
+        <i class="mdi mdi-chevron-left"></i>
         Previous
       </button>
       <span class="page-info">Page {{ pagination.current_page }} of {{ pagination.last_page }}</span>
@@ -79,6 +116,7 @@
         class="btn btn-secondary"
       >
         Next
+        <i class="mdi mdi-chevron-right"></i>
       </button>
     </div>
   </div>
@@ -162,47 +200,66 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.header {
+.page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 24px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  font-size: 32px;
+  color: #1a73e8;
 }
 
 h1 {
-  color: #1e293b;
+  margin: 0;
 }
 
 .filters {
   display: flex;
-  gap: 2rem;
+  gap: 24px;
   flex-wrap: wrap;
-  margin-bottom: 2rem;
+  margin-bottom: 24px;
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 8px;
+  min-width: 150px;
 }
 
 .filter-group label {
-  font-weight: 600;
-  color: #334155;
-  font-size: 0.875rem;
+  font-weight: 500;
+  color: #202124;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.filter-group label i {
+  font-size: 16px;
+  color: #5f6368;
 }
 
 .filter-group select,
 .filter-group input {
-  padding: 0.5rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  padding: 8px 12px;
+  border: 1px solid #dadce0;
   min-width: 150px;
 }
 
 .reviews-grid {
   display: grid;
-  gap: 1.5rem;
+  gap: 16px;
 }
 
 .review-card {
@@ -213,71 +270,121 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .score {
-  font-weight: 600;
-  color: #667eea;
-  font-size: 1.125rem;
+  font-weight: 500;
+  color: #1a73e8;
+  font-size: 16px;
 }
 
 .review-content {
-  color: #334155;
+  color: #202124;
   line-height: 1.6;
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
 }
 
 .topics {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
 .topic-tag {
-  background: #e0e7ff;
-  color: #4338ca;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.875rem;
+  background: #e8f0fe;
+  color: #1a73e8;
+  padding: 4px 12px;
+  font-size: 12px;
   font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .review-footer {
   display: flex;
   justify-content: space-between;
-  font-size: 0.875rem;
-  color: #64748b;
-  padding-top: 1rem;
-  border-top: 1px solid #e2e8f0;
+  font-size: 13px;
+  color: #5f6368;
+  padding-top: 16px;
+  border-top: 1px solid #dadce0;
+}
+
+.review-footer span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .review-actions {
-  margin-top: 1rem;
+  margin-top: 16px;
 }
 
 .btn-sm {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+  padding: 6px 16px;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 2rem;
-  margin-top: 2rem;
+  gap: 24px;
+  margin-top: 32px;
 }
 
 .page-info {
-  color: #64748b;
+  color: #5f6368;
   font-weight: 500;
+  font-size: 14px;
+}
+
+.pagination .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .no-data {
   text-align: center;
-  padding: 3rem;
-  color: #94a3b8;
+  padding: 48px;
+  color: #5f6368;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.no-data i {
+  font-size: 48px;
+  color: #dadce0;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px;
+}
+
+.mdi-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 </style>

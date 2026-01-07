@@ -1,21 +1,36 @@
 <template>
   <div class="container">
-    <div class="create-header">
-      <h1>✍️ Create New Review</h1>
-      <router-link to="/reviews" class="btn btn-secondary">← Back to Reviews</router-link>
+    <div class="page-header">
+      <div class="header-content">
+        <i class="mdi mdi-pencil-plus header-icon"></i>
+        <h1>Create New Review</h1>
+      </div>
+      <router-link to="/reviews" class="btn btn-secondary">
+        <i class="mdi mdi-arrow-left"></i>
+        Back to Reviews
+      </router-link>
     </div>
     
     <div class="create-grid">
       <!-- Review Form -->
       <div class="card">
-        <h2>Write Your Review</h2>
+        <h2>
+          <i class="mdi mdi-text-box"></i>
+          Write Your Review
+        </h2>
         
         <div v-if="error" class="error-message">{{ error }}</div>
-        <div v-if="success" class="success-message">{{ success }}</div>
+        <div v-if="success" class="success-message">
+          <i class="mdi mdi-check-circle"></i>
+          {{ success }}
+        </div>
         
         <form @submit.prevent="handleSubmit">
           <div class="form-group">
-            <label for="content">Review Content</label>
+            <label for="content">
+              <i class="mdi mdi-comment-text"></i>
+              Review Content
+            </label>
             <textarea
               id="content"
               v-model="form.content"
@@ -24,10 +39,15 @@
               required
               minlength="10"
             ></textarea>
-            <small class="char-count">{{ form.content.length }} characters</small>
+            <small class="char-count">
+              <i class="mdi mdi-counter"></i>
+              {{ form.content.length }} characters
+            </small>
           </div>
           
-          <button type="submit" class="btn btn-primary" :disabled="loading || form.content.length < 10">
+          <button type="submit" class="btn btn-primary btn-block" :disabled="loading || form.content.length < 10">
+            <i v-if="loading" class="mdi mdi-loading mdi-spin"></i>
+            <i v-else class="mdi mdi-send"></i>
             {{ loading ? 'Analyzing...' : 'Submit Review' }}
           </button>
         </form>
@@ -35,15 +55,29 @@
       
       <!-- Analysis Result -->
       <div v-if="analysis" class="card analysis-result">
-        <h2>✨ AI Analysis Result</h2>
+        <h2>
+          <i class="mdi mdi-brain"></i>
+          AI Analysis Result
+        </h2>
         
         <div class="analysis-item">
-          <label>Sentiment:</label>
-          <span class="badge" :class="`badge-${analysis.sentiment}`">{{ analysis.sentiment }}</span>
+          <label>
+            <i class="mdi mdi-emoticon"></i>
+            Sentiment
+          </label>
+          <span class="badge" :class="`badge-${analysis.sentiment}`">
+            <i v-if="analysis.sentiment === 'positive'" class="mdi mdi-emoticon-happy"></i>
+            <i v-else-if="analysis.sentiment === 'negative'" class="mdi mdi-emoticon-sad"></i>
+            <i v-else class="mdi mdi-emoticon-neutral"></i>
+            {{ analysis.sentiment }}
+          </span>
         </div>
         
         <div class="analysis-item">
-          <label>Score:</label>
+          <label>
+            <i class="mdi mdi-chart-line"></i>
+            Score
+          </label>
           <div class="score-display">
             <div class="score-bar">
               <div class="score-fill" :style="{ width: analysis.score + '%' }"></div>
@@ -53,29 +87,54 @@
         </div>
         
         <div v-if="analysis.topics && analysis.topics.length > 0" class="analysis-item">
-          <label>Detected Topics:</label>
+          <label>
+            <i class="mdi mdi-tag-multiple"></i>
+            Detected Topics
+          </label>
           <div class="topics">
-            <span v-for="topic in analysis.topics" :key="topic" class="topic-tag">{{ topic }}</span>
+            <span v-for="topic in analysis.topics" :key="topic" class="topic-tag">
+              <i class="mdi mdi-tag"></i>
+              {{ topic }}
+            </span>
           </div>
         </div>
         
         <div v-else class="analysis-item">
-          <p class="no-topics">No specific topics detected</p>
+          <p class="no-topics">
+            <i class="mdi mdi-information-outline"></i>
+            No specific topics detected
+          </p>
         </div>
         
         <div class="analysis-info">
-          <p>💡 This analysis was performed automatically using our AI service!</p>
+          <i class="mdi mdi-lightbulb-on"></i>
+          <p>This analysis was performed automatically using our AI service!</p>
         </div>
       </div>
       
       <!-- Tips Card -->
       <div v-else class="card tips-card">
-        <h3>💡 Tips for Better Reviews</h3>
+        <h3>
+          <i class="mdi mdi-lightbulb"></i>
+          Tips for Better Reviews
+        </h3>
         <ul>
-          <li>Be specific about your experience</li>
-          <li>Mention aspects like delivery, quality, price, or service</li>
-          <li>Use descriptive words to express your sentiment</li>
-          <li>Write at least 10 characters for accurate analysis</li>
+          <li>
+            <i class="mdi mdi-check"></i>
+            Be specific about your experience
+          </li>
+          <li>
+            <i class="mdi mdi-check"></i>
+            Mention aspects like delivery, quality, price, or service
+          </li>
+          <li>
+            <i class="mdi mdi-check"></i>
+            Use descriptive words to express your sentiment
+          </li>
+          <li>
+            <i class="mdi mdi-check"></i>
+            Write at least 10 characters for accurate analysis
+          </li>
         </ul>
       </div>
     </div>
@@ -127,20 +186,41 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
-.create-header {
+.page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 24px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  font-size: 32px;
+  color: #1a73e8;
 }
 
 h1 {
-  color: #1e293b;
+  margin: 0;
+}
+
+h2, h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+h2 i, h3 i {
+  color: #5f6368;
 }
 
 .create-grid {
   display: grid;
-  gap: 2rem;
+  gap: 24px;
 }
 
 @media (min-width: 768px) {
@@ -149,95 +229,126 @@ h1 {
   }
 }
 
-h2 {
-  color: #1e293b;
-  margin-bottom: 1.5rem;
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .char-count {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   text-align: right;
-  color: #64748b;
-  margin-top: 0.5rem;
+  color: #5f6368;
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.btn-block {
+  width: 100%;
+  margin-top: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .analysis-result {
-  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+  background: #e8f0fe;
+  border-left: 4px solid #1a73e8;
 }
 
 .analysis-item {
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
 }
 
 .analysis-item label {
-  display: block;
-  font-weight: 600;
-  color: #334155;
-  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  color: #202124;
+  margin-bottom: 8px;
+  font-size: 14px;
 }
 
 .score-display {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 16px;
 }
 
 .score-bar {
   flex: 1;
   height: 32px;
-  background: #e2e8f0;
-  border-radius: 8px;
+  background: #dadce0;
   overflow: hidden;
 }
 
 .score-fill {
   height: 100%;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: #1a73e8;
   transition: width 0.5s ease;
 }
 
 .score-value {
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: #667eea;
+  font-size: 20px;
+  font-weight: 500;
+  color: #1a73e8;
   min-width: 70px;
 }
 
 .topics {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .topic-tag {
-  background: #e0e7ff;
-  color: #4338ca;
-  padding: 0.5rem 1rem;
-  border-radius: 12px;
+  background: #ffffff;
+  color: #1a73e8;
+  padding: 6px 12px;
   font-weight: 500;
+  border: 1px solid #dadce0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .no-topics {
-  color: #94a3b8;
+  color: #5f6368;
   font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .analysis-info {
-  margin-top: 1.5rem;
-  padding: 1rem;
+  margin-top: 24px;
+  padding: 16px;
   background: rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
-  font-size: 0.875rem;
-  color: #475569;
+  border: 1px solid #dadce0;
+  font-size: 13px;
+  color: #5f6368;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.analysis-info i {
+  color: #fbbc04;
+  font-size: 20px;
 }
 
 .tips-card {
-  background: #fef3c7;
+  background: #fef7e0;
+  border-left: 4px solid #fbbc04;
 }
 
 .tips-card h3 {
-  color: #92400e;
-  margin-bottom: 1rem;
+  color: #202124;
+  margin-bottom: 16px;
 }
 
 .tips-card ul {
@@ -246,17 +357,24 @@ h2 {
 }
 
 .tips-card li {
-  padding: 0.5rem 0;
-  color: #78350f;
-  position: relative;
-  padding-left: 1.5rem;
+  padding: 8px 0;
+  color: #202124;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.tips-card li::before {
-  content: '✓';
-  position: absolute;
-  left: 0;
-  color: #92400e;
-  font-weight: bold;
+.tips-card li i {
+  color: #34a853;
+  font-size: 18px;
+}
+
+.mdi-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 </style>

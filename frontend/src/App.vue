@@ -4,7 +4,7 @@
       <div class="nav-container">
         <div class="nav-left">
           <router-link to="/dashboard" class="logo">
-            <span class="logo-icon">📊</span>
+            <i class="mdi mdi-chart-box logo-icon"></i>
             <span class="logo-text">Review Analysis</span>
           </router-link>
         </div>
