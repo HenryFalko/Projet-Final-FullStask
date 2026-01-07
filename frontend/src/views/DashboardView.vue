@@ -137,6 +137,8 @@ h1 {
 .dashboard-grid {
   display: grid;
   gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .stats-row {
